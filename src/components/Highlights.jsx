@@ -1,62 +1,57 @@
-import { useEffect, useRef, useState } from 'react'
-import { highlights } from '../data/resume'
+import { ArrowUpRight } from 'lucide-react'
 import { useReveal } from '../hooks/useReveal'
-
-function CountUp({ target, suffix = '' }) {
-  const [val, setVal] = useState(0)
-  const ref = useRef(null)
-  useEffect(() => {
-    const observer = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return
-      observer.disconnect()
-      const num = parseFloat(target)
-      if (isNaN(num)) { setVal(target); return }
-      const dur = 1200
-      const start = performance.now()
-      const animate = (now) => {
-        const p = Math.min((now - start) / dur, 1)
-        const ease = 1 - Math.pow(1 - p, 3)
-        setVal((num * ease).toFixed(target.includes('.') ? 1 : 0))
-        if (p < 1) requestAnimationFrame(animate)
-      }
-      requestAnimationFrame(animate)
-    }, { threshold: 0.5 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [target])
-  return <span ref={ref}>{val}{suffix}</span>
-}
-
-const STATS = [
-  { value: '99', suffix: '%+', label: 'Manual workload reduced', desc: 'via Python automation pipelines' },
-  { value: '3', suffix: '+',  label: 'Years of experience',        desc: 'Large-scale business system' },
-  { value: '6',    suffix: '+',  label: 'Years of experience',    desc: 'Across Infra, Ops and Dev' },
-]
 
 export default function Highlights() {
   const ref = useReveal()
   return (
-    <section style={{ padding: '6rem 0' }} className="reveal" ref={ref}>
-      <div className="container">
-        <div className="eyebrow reveal-item">Impact</div>
-        <h2 className="section-title reveal-item" style={{ marginBottom: '3rem' }}>By the numbers</h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', background: 'var(--border)', borderRadius: 20, overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
-          {STATS.map((s, i) => (
-            <div key={s.label} className="reveal-item" style={{
-              background: 'var(--bg-card)',
-              padding: '2.2rem 1.8rem',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, var(--accent) ${i * 25}%, transparent 100%)`, opacity: 0.6 }} />
-              <div className="stat-number font-display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, color: 'var(--accent)', letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 6 }}>
-                <CountUp target={s.value} suffix={s.suffix} />
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-2)', marginBottom: 4 }}>{s.label}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-4)', fontFamily: 'JetBrains Mono, monospace' }}>{s.desc}</div>
-            </div>
-          ))}
+    <section className="approach-section reveal" ref={ref}>
+      <div className="container approach-layout">
+        <div>
+          <p className="eyebrow">Business applications / process improvement</p>
+          <h2>
+            Software for how
+            <br />
+            people <em>actually work.</em>
+          </h2>
+        </div>
+        <div className="approach-notes">
+          <div>
+            <span>01</span>
+            <h3>Start with the workflow.</h3>
+            <p>
+              I work with operations teams to understand the steps, exceptions,
+              and handoffs before automating them.
+            </p>
+          </div>
+          <div>
+            <span>02</span>
+            <h3>Make the data trustworthy.</h3>
+            <p>
+              Transform, validate, and reconcile. At Swivel, SQL query
+              improvements reduced data-processing time by 25%.
+            </p>
+          </div>
+          <div>
+            <span>03</span>
+            <h3>Follow through after release.</h3>
+            <p>
+              Regression checks, deployment verification, production
+              troubleshooting, and documentation are part of the work.
+            </p>
+          </div>
+          <div>
+            <span>04</span>
+            <h3>Use AI, then verify the work.</h3>
+            <p>
+              I use Claude Code and Codex with MCP servers, plugins, and
+              reusable skills for development, debugging, and test preparation.
+              I review the changes and check the result against the
+              requirements.
+            </p>
+          </div>
+          <a className="text-link" href="#experience">
+            The experience behind it <ArrowUpRight size={16} />
+          </a>
         </div>
       </div>
     </section>

@@ -1,130 +1,123 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense } from 'react'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import { personal } from '../data/resume'
 
-const TYPED_STRINGS = [
-  'Software Engineer',
-  'Backend Developer',
-  'Automation Builder',
-  'ETL Pipeline Architect',
-]
+const SystemScene = lazy(() => import('./SystemScene'))
 
-function useTypewriter(strings, speed = 70, pause = 1800) {
-  const [display, setDisplay] = useState('')
-  const [idx, setIdx] = useState(0)
-  const [deleting, setDeleting] = useState(false)
-
-  useEffect(() => {
-    const current = strings[idx % strings.length]
-    const timeout = setTimeout(() => {
-      if (!deleting) {
-        setDisplay(current.slice(0, display.length + 1))
-        if (display.length + 1 === current.length) {
-          setTimeout(() => setDeleting(true), pause)
-        }
-      } else {
-        setDisplay(current.slice(0, display.length - 1))
-        if (display.length - 1 === 0) {
-          setDeleting(false)
-          setIdx(i => i + 1)
-        }
-      }
-    }, deleting ? speed / 2 : speed)
-    return () => clearTimeout(timeout)
-  }, [display, deleting, idx])
-
-  return display
+function SceneFallback() {
+  return (
+    <svg className="scene-fallback" viewBox="0 0 560 480" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1">
+        <ellipse
+          cx="280"
+          cy="235"
+          rx="210"
+          ry="85"
+          transform="rotate(-30 280 235)"
+        />
+        <ellipse
+          cx="280"
+          cy="235"
+          rx="210"
+          ry="85"
+          transform="rotate(30 280 235)"
+        />
+        <ellipse cx="280" cy="235" rx="120" ry="195" />
+        <path d="M280 172 340 208V276L280 312 220 276V208ZM220 208 280 244 340 208M280 244V312" />
+      </g>
+      <g fill="currentColor">
+        {[
+          [70, 235],
+          [455, 170],
+          [280, 40],
+          [280, 430],
+        ].map(([x, y]) => (
+          <circle key={`${x}-${y}`} cx={x} cy={y} r="5" />
+        ))}
+      </g>
+    </svg>
+  )
 }
 
-export default function Hero() {
-  const typed = useTypewriter(TYPED_STRINGS)
-
+export default function Hero({ motion, dark }) {
   return (
-    <section id="about" style={{ position: 'relative', minHeight: '50vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-      {/* Background mesh */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `
-          radial-gradient(ellipse 70% 50% at 50% -5%, var(--accent-glow) 0%, transparent 65%),
-          radial-gradient(ellipse 40% 30% at 85% 15%, rgba(139,92,246,0.05) 0%, transparent 55%)
-        `,
-      }} />
-
-      {/* Grid lines */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.03,
-        backgroundImage: 'linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px)',
-        backgroundSize: '60px 60px',
-      }} />
-
-      <div className="container" style={{ paddingTop: 96, paddingBottom: 80, position: 'relative', zIndex: 1 }}>
-        {/* Terminal badge */}
-        <div className="fade-up" style={{ animationDelay: '0.0s', marginBottom: 28 }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
-            color: 'var(--accent)', background: 'var(--accent-dim)',
-            border: '1px solid var(--accent-glow)',
-            borderRadius: 99, padding: '5px 14px',
-          }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22C55E', flexShrink: 0, boxShadow: '0 0 6px rgba(34,197,94,0.6)' }} />
-            {personal.location} · Open to work
+    <section id="about" className="hero-section">
+      <div className="container">
+        <div className="hero-topline">
+          <span>
+            <i className="availability-dot" /> Available for the right
+            opportunity
+          </span>
+          <span>Burnaby, BC / Vancouver area</span>
+        </div>
+        <div className="hero-layout">
+          <div className="hero-copy">
+            <p className="eyebrow fade-up">Eric Chan · Software Engineer</p>
+            <h1 className="fade-up">
+              I make systems
+              <br />
+              work <em>together.</em>
+            </h1>
+            <p className="hero-description fade-up">
+              Business applications, API integrations, and workflow automation.
+              I work with the people using a system, build the missing pieces,
+              and check that the result works in practice.
+            </p>
+            <div className="hero-actions fade-up">
+              <a className="btn btn-primary" href="#projects">
+                Explore my work <ArrowDown size={17} />
+              </a>
+              <a
+                className="text-link"
+                href={personal.github}
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub <ArrowUpRight size={16} />
+              </a>
+            </div>
+            <div className="hero-footnote">
+              <span className="code-comment">
+                // built around real business problems
+              </span>
+              <span>Python · C# · APIs · Automation</span>
+            </div>
+          </div>
+          <div className="hero-art">
+            <div className="scene-topline">
+              <span>FIG. 01 / CONNECTED SYSTEMS</span>
+              <span className="scene-status">
+                {motion ? 'IN MOTION' : 'STILL FRAME'}
+              </span>
+            </div>
+            <div className="scene-stage">
+              <SceneFallback />
+              {motion && (
+                <Suspense fallback={null}>
+                  <SystemScene dark={dark} />
+                </Suspense>
+              )}
+              <span className="scene-label label-input">01 / inputs</span>
+              <span className="scene-label label-logic">
+                02 / business logic
+              </span>
+              <span className="scene-label label-output">
+                03 / useful output
+              </span>
+            </div>
+            <div className="scene-caption">
+              <span>Good software connects the dots.</span>
+              <span>Move your cursor ↗</span>
+            </div>
           </div>
         </div>
-
-        {/* Name */}
-        <h1 className="fade-up font-display" style={{
-          animationDelay: '0.1s',
-          fontSize: 'clamp(3rem, 9vw, 7rem)',
-          fontWeight: 700,
-          letterSpacing: '-0.04em',
-          lineHeight: 1.0,
-          color: 'var(--text)',
-          marginBottom: 20,
-        }}>
-          Eric Chan
-        </h1>
-
-        {/* Typewriter role */}
-        <div className="fade-up" style={{ animationDelay: '0.2s', marginBottom: 24, height: 42, display: 'flex', alignItems: 'center' }}>
-          <span style={{
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
-            color: 'var(--accent)',
-            fontWeight: 500,
-          }}>
-            {typed}
-            <span className="cursor-blink" style={{ display: 'inline-block', width: 2, height: '1.1em', background: 'var(--accent)', marginLeft: 2, verticalAlign: 'middle' }} />
-          </span>
-        </div>
-
-        {/* Bio */}
-        <p className="fade-up" style={{
-          animationDelay: '0.3s',
-          fontSize: '1rem', lineHeight: 1.8,
-          color: 'var(--text-3)', maxWidth: 540,
-          marginBottom: 40,
-        }}>
-          {personal.bio}
-        </p>
-
-        {/* CTAs */}
-        <div className="fade-up" style={{ animationDelay: '0.4s', display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 56 }}>
-          {/* <a href={`mailto:${personal.email}`} className="btn btn-primary">
-            Get in touch
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a> */}
-          <a href="#projects" className="btn btn-outline">View projects</a>
-          <a href={personal.github} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-            GitHub
-            <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
-          </a>
-          <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-            LinkedIn
-            <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        <div className="hero-bottom">
+          <span>SELECTED WORK, ONGOING CURIOSITY.</span>
+          <a href="#projects">
+            Scroll to explore <ArrowDown size={13} />
           </a>
         </div>
       </div>
-
     </section>
   )
 }

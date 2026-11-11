@@ -1,22 +1,27 @@
 import { useEffect, useRef } from 'react'
 
-export function useReveal(className = 'reveal') {
+export function useReveal() {
   const ref = useRef(null)
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    // Staggered children
-    const items = el.querySelectorAll('.reveal-item')
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        el.classList.add('visible')
-        items.forEach((item, i) => {
-          setTimeout(() => item.classList.add('visible'), i * 80)
-        })
-        observer.unobserve(el)
-      }
-    }, { threshold: 0.06 })
-    observer.observe(el)
+    const element = ref.current
+    if (!element) return
+    if (
+      !('IntersectionObserver' in window) ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      element.classList.add('visible')
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          element.classList.add('visible')
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.04 },
+    )
+    observer.observe(element)
     return () => observer.disconnect()
   }, [])
   return ref

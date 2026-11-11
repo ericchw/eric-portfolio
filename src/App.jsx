@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Highlights from './components/Highlights'
@@ -9,54 +9,58 @@ import Education from './components/Education'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 
-export default function App() {
-  const [dark, setDark] = useState(true)
+function savedPreference(key, fallback) {
+  try {
+    const saved = localStorage.getItem(key)
+    return saved === null ? fallback : saved === 'true'
+  } catch {
+    return fallback
+  }
+}
 
-  // Sync dark class to <html>
+export default function App() {
+  const [dark, setDark] = useState(() =>
+    savedPreference('portfolio-dark', false),
+  )
+  const [motion, setMotion] = useState(() =>
+    savedPreference(
+      'portfolio-motion',
+      !matchMedia('(prefers-reduced-motion: reduce)').matches,
+    ),
+  )
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
-    document.documentElement.style.backgroundColor = dark ? '#060D1A' : '#F8FAFC'
-  }, [dark])
-
-  // System preference on mount
-  useEffect(() => {
-    setDark(window.matchMedia('(prefers-color-scheme: dark)').matches)
-  }, [])
-
-  // Cursor glow effect
-  useEffect(() => {
-    const el = document.getElementById('cursor-glow')
-    if (!el) return
-    const move = (e) => {
-      el.style.background = `radial-gradient(600px circle at ${e.clientX}px ${e.clientY}px, ${dark ? 'rgba(96,165,250,0.06)' : 'rgba(59,130,246,0.04)'}, transparent 50%)`
+    document.documentElement.dataset.motion = motion ? 'running' : 'paused'
+    try {
+      localStorage.setItem('portfolio-dark', String(dark))
+      localStorage.setItem('portfolio-motion', String(motion))
+    } catch {
+      /* Preferences remain usable when storage is unavailable. */
     }
-    window.addEventListener('mousemove', move)
-    return () => window.removeEventListener('mousemove', move)
-  }, [dark])
+  }, [dark, motion])
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
-      {/* Cursor glow layer */}
-      <div id="cursor-glow" />
-
-      <Nav dark={dark} setDark={setDark} />
-      <main style={{ position: 'relative', zIndex: 1 }}>
-        <Hero />
-        <div className="divider" />
+    <>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
+      <Nav
+        dark={dark}
+        setDark={setDark}
+        motion={motion}
+        setMotion={setMotion}
+      />
+      <main id="main">
+        <Hero motion={motion} dark={dark} />
+        <Projects motion={motion} />
         <Highlights />
-        <div className="divider" />
-        <Projects or Works />
-        <div className="divider" />
         <Skills />
-        <div className="divider" />
         <Experience />
-        <div className="divider" />
         <Education />
-        <div className="divider" />
         <Contact />
-        <div className="divider" />
       </main>
       <Footer />
-    </div>
+    </>
   )
 }
