@@ -8,7 +8,7 @@ A personal software engineering portfolio focused on business applications, API 
 
 - A custom Three.js systems sketch with pointer interaction and animated data paths.
 - Light and dark themes, plus a persistent animation toggle. Reduced-motion settings start with a static illustration.
-- A featured [clinic intake automation demo](https://github.com/ericchw/vpc-n8n-intake-demo) with a real, click-to-play 24-second dashboard recording.
+- A featured [clinic intake automation demo](https://github.com/ericchw/clinic-n8n-intake-demo) with a real, click-to-play 24-second dashboard recording.
 - Filterable project links, a work-history timeline, and layouts for desktop and mobile.
 
 The intake recording uses fictional records, a local Python API, and disposable SQLite. The demo repository also includes n8n workflows and PostgreSQL through Docker Compose. It is not a live clinical integration or affiliated with a clinic.

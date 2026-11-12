@@ -19,7 +19,7 @@ export const projects = [
     desc: 'A runnable n8n + Python proof of concept: validate incoming requests, flag exceptions, and require staff review before approval. Includes audit events and operational reporting.',
     tags: ['Python', 'FastAPI', 'n8n', 'PostgreSQL', 'Docker'],
     categories: ['Automation', 'Backend', 'Demos'],
-    github: 'https://github.com/ericchw/vpc-n8n-intake-demo',
+    github: 'https://github.com/ericchw/clinic-n8n-intake-demo',
     featured: true,
   },
   {

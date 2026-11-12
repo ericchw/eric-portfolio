@@ -20,7 +20,7 @@ export default function Contact() {
           <div>
             <p>{personal.openTo}</p>
             <a className="contact-email" href={`mailto:${personal.email}`}>
-              {personal.email} <ArrowUpRight size={25} />
+              Email me <ArrowUpRight size={25} />
             </a>
           </div>
           <div className="contact-socials">
